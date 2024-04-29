@@ -1,0 +1,309 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <style>
+        body {
+            background: radial-gradient(circle, rgb(61, 132, 212) 0%, rgb(1, 1, 113) 100%);
+        }
+
+        #myImage {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .cabinet-info {
+            color: rgb(255, 255, 255);
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            width: 45%;
+            text-align: left;
+        }
+
+        .todaywarning {
+            color: rgb(255, 255, 255);
+            text-align: left;
+            position: fixed;
+            bottom: 0; 
+            left: 10%; 
+            margin: 10px;
+            padding: 10px;
+            width: 30%;
+            overflow: hidden; 
+            height: 200px; 
+        }
+
+        .warning {
+            color: rgb(255, 255, 255);
+            text-align: left;
+            position: fixed;
+            bottom: 0;
+            right: 10%; 
+            margin: 10px;
+            padding: 10px;
+            width: 30%;
+            overflow: hidden; 
+            max-height: 200px;
+        }
+
+        #WarningTitle{
+            color:rgb(255, 0, 0);
+            text-align: left;
+            padding: 10px;
+            font-size: 40px; 
+            margin-top: 0px; 
+            margin-bottom: 0px;
+        }
+
+        #latestWarnings {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        #todayWarnings {
+            display: flex;
+            flex-direction: column;
+            height: 17%;
+        }
+
+        #warningsContainer {
+            flex-grow: 1;
+            overflow-y: scroll; 
+            border-top: 2px solid #ccc;
+            font-size: 20px;
+            scrollbar-color: rgba(241, 241, 241, 0.8) rgba(136, 136, 136, 0.8);
+            scrollbar-width: thin;
+        }
+
+        .statusIndicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-color: rgb(9, 252, 9);
+        }
+
+        #CurrentTime, #Updatetime, #Title, #Cabinet1, #Cabinet2, #Cabinet3, #Cabinet4, #Cabinet5, #Cabinet6, 
+        #Cabinet7, #Cabinet8, #Cabinet9, #Cabinet10, #Cabinet11, #Cabinet12, #temperature1, #temperature2, #temperature3,
+        #humidity1, #humidity2, #humidity3{
+            margin: 5px;
+            padding: 5px;
+            font-size: 27px;
+            color: rgb(255, 255, 255);
+        }
+
+        .dropdown-menu {
+            width: 300px;
+            height: 400px; 
+            display: none;
+            position: fixed;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            padding: 10px;
+            top: 50%;
+            left: 50%;
+            margin-top: -100px; 
+            margin-left: -150px; 
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .menu-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .submenu {
+            padding-left: 30px;
+            margin-bottom: 30px;
+        }
+
+        .submenu label {
+            margin-bottom: 5px;
+            display: inline-block;
+            width: 300px;
+        }
+
+        .submenu input[type="text"] {
+            width: calc(100% - 120px); 
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        #menutoggle {
+            position: fixed;
+            top: 50px;
+            left: 50px;
+            z-index: 9999;
+            transform: scale(2); 
+        }
+
+
+        #submitbutton{
+            position:absolute;
+            top: 300px;
+            left: 230px;
+        }
+
+        #tembutton{
+            position:absolute;
+            top: 50px;
+            left: 100px;
+            transform: scale(3);
+        }
+
+        #doorbutton{
+            position:absolute;
+            top: 150px;
+            left: 100px;
+            transform: scale(3);
+        }
+
+        .alert-box {
+            position: fixed;
+            top: 50px; 
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 128, 0, 0.8);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 9999; 
+        }
+
+        #Linegroup {
+            max-width: 200px; 
+            max-height: 200px; 
+            width: auto; 
+            height: auto; 
+        }
+
+
+    </style>
+</head>
+<body>
+    <img id='myImage' src='room.png'>
+
+    <div class="cabinet-info">
+        <p id='CurrentTime'>現在時間: </p>
+    </div>
+
+    <div class="cabinet-info">
+        <p id='Updatetime'>上次異動時間: </p>
+    </div>
+
+    <div class="cabinet-info">
+        <p id='Title'>前門狀態</p>
+        <p id='Cabinet1'>機櫃1: <span id='indicator1' class='statusIndicator'></span></p>
+        <p id='Cabinet2'>機櫃2: <span id='indicator2' class='statusIndicator'></span></p>
+        <p id='Cabinet3'>機櫃3: <span id='indicator3' class='statusIndicator'></span></p>
+        <p id='Cabinet4'>機櫃4: <span id='indicator4' class='statusIndicator'></span></p>
+        <p id='Cabinet5'>機櫃5: <span id='indicator5' class='statusIndicator'></span></p>
+        <p id='Cabinet6'>機櫃6: <span id='indicator6' class='statusIndicator'></span></p>
+    </div>
+
+    <div class="cabinet-info">
+        <p id='Title'>後門狀態</p>
+        <p id='Cabinet7'>機櫃1: <span id='indicator7' class='statusIndicator'></span></p>
+        <p id='Cabinet8'>機櫃2: <span id='indicator8' class='statusIndicator'></span></p>
+        <p id='Cabinet9'>機櫃3: <span id='indicator9' class='statusIndicator'></span></p>
+        <p id='Cabinet10'>機櫃4: <span id='indicator10' class='statusIndicator'></span></p>
+        <p id='Cabinet11'>機櫃5: <span id='indicator11' class='statusIndicator'></span></p>
+        <p id='Cabinet12'>機櫃6: <span id='indicator12' class='statusIndicator'></span></p>
+    </div>
+
+    <div class="cabinet-info">
+        <p id='temperature1'>溫度: C</p>
+        <p id='temperature2'>溫度: C</p>
+        <p id='temperature3'>溫度: C</p>
+    </div>
+
+    <div class="cabinet-info">
+        <p id='humidity1'>濕度: %</p>
+        <p id='humidity2'>濕度: %</p>
+        <p id='humidity3'>濕度: %</p>
+    </div>
+
+    <div id="latestWarnings" class="warning">
+        <p id='WarningTitle'>歷史告警</p>
+        <div id='warningsContainer'>
+            <p id='warning1'></p>
+            <p id='warning2'></p>
+            <p id='warning3'></p>
+            <p id='warning4'></p>
+            <p id='warning5'></p>
+            <p id='warning6'></p>
+            <p id='warning7'></p>
+            <p id='warning8'></p>
+            <p id='warning9'></p>
+            <p id='warning10'></p>
+        </div>
+    </div>
+
+    <div id="todayWarnings" class="todaywarning">
+        <p id='WarningTitle'>今日告警</p>
+        <div id='warningsContainer'>
+            <p id='todaywarning1'></p>
+            <p id='todaywarning2'></p>
+            <p id='todaywarning3'></p>
+            <p id='todaywarning4'></p>
+            <p id='todaywarning5'></p>
+            <p id='todaywarning6'></p>
+            <p id='todaywarning7'></p>
+            <p id='todaywarning8'></p>
+            <p id='todaywarning9'></p>
+            <p id='todaywarning10'></p>
+        </div>
+    </div>
+
+    <button id="menutoggle">設定</button>
+
+    <div class="dropdown-menu" id="menu">
+        <button id="tembutton">溫度設定</button>
+        <button id="doorbutton">通知設定</button>
+    </div>
+
+    <div class="dropdown-menu" id="doormenu">
+        <span class="close-btn" id="closeLine">&times;</span>
+        <img id="Linegroup" src="line.jpg">
+    </div>
+
+    <div class="dropdown-menu" id="temmenu">
+        <span class="close-btn" id="closebtn">&times;</span>
+        <div class="menu-title">警示溫度</div>
+        <div class="submenu">
+            <label for="limittemperature1">機櫃後溫度：</label>
+            <input type="text" id="limittemperature1">
+        </div>
+        <div class="submenu">
+            <label for="limittemperature2">冷氣出風口溫度：</label>
+            <input type="text" id="limittemperature2">
+        </div>
+        <div class="submenu">
+            <label for="limittemperature3">室內溫度：</label>
+            <input type="text" id="limittemperature3">
+        </div>
+        <button id="submitbutton">確認</button>
+    </div>
+    
+    <script src="script.js"></script>
+
+</body>
+</html>
