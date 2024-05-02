@@ -1,3 +1,5 @@
+var savedmessages = [];
+var savedtimes = [];
 //時間
 function updateDateTime() {
   var currentDateTime = new Date();
@@ -44,7 +46,8 @@ function fetchDoorData() {
 var temperaturelock = [1,1,1,1];
 var limit_temperature = [0,0,0,0];
 function fetchTH1Data() {
-  var THLocation = ["機櫃後溫度: ","冷氣出風口溫度: ","室內溫度: "];
+  var TemLocation = ["機櫃後溫度: ","冷氣出風口溫度: ","室內溫度: "];
+  var HumLocation = ["機櫃後濕度: ","冷氣出風口濕度: ","室內溼度: "];
   var temperaturemessage;
   //總共有三個溫溼度感測器
   for(let i=1;i<4;i++){
@@ -54,8 +57,8 @@ function fetchTH1Data() {
             var data = JSON.parse(this.responseText);
             var latestData = data[data.length - 1] || {};
   
-            document.getElementById('temperature' + i).innerHTML = THLocation[i - 1] + latestData.temperature + 'C';
-            document.getElementById('humidity' + i).innerHTML = THLocation[i - 1] + latestData.humidity + '%';
+            document.getElementById('temperature' + i).innerHTML = TemLocation[i - 1] + latestData.temperature + 'C';
+            document.getElementById('humidity' + i).innerHTML = HumLocation[i - 1] + latestData.humidity + '%';
             
             //溫度過高就傳送LineNotify
             if(latestData.temperature >= limit_temperature[i] && temperaturelock[i] == 0){
@@ -95,24 +98,30 @@ function fetchHISData() {
           if(indicatornumber > 6){
             indicatornumber = indicatornumber / 2;
           }
+
+          savedtimes.push(timestampString);
+          if(savedtimes.length > 10){
+            savedtimes.shift();
+          }
+          //console.log(savedtimes);//第一項是第十筆最後一項才是最新一筆資料
           
           //歷史前十筆警告
           if (timestampString.getDate() == today.getDate() || timestampString.getMonth() == today.getMonth() || timestampString.getFullYear() == today.getFullYear()) {
             if(latestData.doorstate == 1){
-              document.getElementById('warning' + i).innerHTML = '事件' + i + ': ' + gmtPlus8Time + ': 機櫃' + indicatornumber + doorlocate + '已開啟';
+              document.getElementById('warning' + i).innerHTML = '事件' + i + ': ' + gmtPlus8Time + ': 機櫃' + indicatornumber + doorlocate + '開啟';
             }
             else if(latestData.doorstate == 0){
-              document.getElementById('warning' + i).innerHTML = '事件' + i + ': ' + gmtPlus8Time + ': 機櫃' + indicatornumber + doorlocate + '已關閉';
+              document.getElementById('warning' + i).innerHTML = '事件' + i + ': ' + gmtPlus8Time + ': 機櫃' + indicatornumber + doorlocate + '關閉';
             }
           }
 
           //今日前十筆警告
           if(timestampString.getDate() == today.getDate() && timestampString.getMonth() == today.getMonth() && timestampString.getFullYear() == today.getFullYear()){
             if(latestData.doorstate == 1){
-              document.getElementById('todaywarning' + i).innerHTML = '事件' + i + ': ' + gmtPlus8Time + ': 機櫃' + indicatornumber + doorlocate + '已開啟';
+              document.getElementById('todaywarning' + i).innerHTML = '事件' + i + ': ' + gmtPlus8Time + ': 機櫃' + indicatornumber + doorlocate + '開啟';
             }
             else if(latestData.doorstate == 0){
-              document.getElementById('todaywarning' + i).innerHTML = '事件' + i + ': ' + gmtPlus8Time + ': 機櫃' + indicatornumber + doorlocate + '已關閉';
+              document.getElementById('todaywarning' + i).innerHTML = '事件' + i + ': ' + gmtPlus8Time + ': 機櫃' + indicatornumber + doorlocate + '關閉';
             }
           }
 
@@ -141,6 +150,11 @@ function sendLineNotify(sendmessage) {
   var message = sendmessage;//要傳送的訊息
   var url = "/send-line-notify";
 
+  savedmessages.push(message);
+  if(savedmessages.length > 10){
+    savedmessages.shift();
+  }
+  console.log(savedmessages);
   fetch(url, {
       method: 'POST',
       headers: {
@@ -182,7 +196,6 @@ document.addEventListener('DOMContentLoaded', function () {
     limit_temperature[1] = limittemperature1.value;
     limit_temperature[2] = limittemperature2.value;
     limit_temperature[3] = limittemperature3.value;
-    doorlock = 0;
     temperaturelock = [0,0,0,0];
     temmenu.classList.remove('active');
 
@@ -205,6 +218,10 @@ document.addEventListener('DOMContentLoaded', function () {
   closeLine.addEventListener('click', function () {
     doormenu.classList.remove('active');
 });
+  //關閉設定按鈕
+  closeset.addEventListener('click', function () {
+    menu.classList.remove('active');
+  });
 
   //門位設定按鈕
   doorbutton.addEventListener('click', function () {
