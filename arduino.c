@@ -3,6 +3,7 @@
 #include <DHTesp.h>
 #include <HTTPClient.h>
 
+//const byte hallPin[12] = {1,2,3,4,5,6,7,8,9,10,11,12};
 const byte hallPin = 13;//霍爾感應的pin角
 const byte dhtPin = 14;//溫溼度的pin角
 const byte dhtPin2 = 15;//溫溼度的pin角
@@ -13,10 +14,10 @@ const char *serverUrl = "http://192.168.0.105:3000/data/doordata"; //ipconfig ip
 const char *THUrls[] = {"http://192.168.0.105:3000/data/thdata1", 
                         "http://192.168.0.105:3000/data/thdata2",
                         "http://192.168.0.105:3000/data/thdata3"};//三個溫溼度的資料庫資料夾
+//bool lock[12] = {false, false, false, false, false, false, false, false, false, false, false, false};
 bool lock = false;
 
 DHTesp dht, dht2, dht3;
-
 AsyncWebServer server(80);
 
 void setup() {
@@ -56,15 +57,43 @@ void sendData(const char* url, DHTesp& dhtSensor) {
 
 //重複讀取霍爾感應與蒐集溫溼度
 void loop() {
+    /*
+    for(int i=0;i<12;i++){
+        int hallValue = digitalRead(hallPin[i]);
+        HTTPClient http;
+        http.begin(serverUrl);
+        http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+    
+        if (hallValue == 1 && !lock[i]) {
+            String postData = "doornumber=" + String(i) + "&doorstate=" + String(hallValue);
+            int httpResponseCode = http.POST(postData);
+            if (httpResponseCode > 0) {
+                Serial.println("DooropenData sent to Node.js server successfully");
+                lock[i] = true;
+            } else {
+                Serial.println("Error sending Dooropendata to Node.js server");
+            }
+        } else if (hallValue == 0 && lock[i]) {
+            int httpResponseCode = http.POST(postData);
+            if (httpResponseCode > 0) {
+                Serial.println("DoorcloseData sent to Node.js server successfully");
+                lock[i] = false;
+            } else {
+                Serial.println("Error sending Doorclosedata to Node.js server");
+            }
+        }
+        http.end();       
+    }
+    */
+
     int hallValue = digitalRead(hallPin);
 
     HTTPClient http;
     http.begin(serverUrl);
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-
-    String postData = "doornumber=" + String(1) + "&doorstate=" + String(hallValue);
-
+    
     if (hallValue == 1 && !lock) {
+        String postData = "doornumber=" + String(1) + "&doorstate=" + String(hallValue);
         int httpResponseCode = http.POST(postData);
         if (httpResponseCode > 0) {
             Serial.println("DooropenData sent to Node.js server successfully");
