@@ -3,7 +3,9 @@
 #include <DHTesp.h>
 #include <HTTPClient.h>
 
-//const byte hallPin[12] = {1,2,3,4,5,6,7,8,9,10,11,12};
+//const byte hallPin[12] = {1,2,3,4,5,6,7,8,9,10,11,12};//12個霍爾感應的Pin角
+//const byte dhtPin[3] = {14, 15, 27};//3個溫溼度的pin角
+
 const byte hallPin = 13;//霍爾感應的pin角
 const byte dhtPin = 14;//溫溼度的pin角
 const byte dhtPin2 = 15;//溫溼度的pin角
@@ -29,8 +31,27 @@ void setup() {
         Serial.println("Connecting to WiFi...");
     }
     Serial.println("Connected to WiFi");
-
-    pinMode(hallPin, INPUT);
+    /*
+    pinMode(hallPin[0], INPUT);
+    pinMode(hallPin[1], INPUT);
+    pinMode(hallPin[2], INPUT);
+    pinMode(hallPin[3], INPUT);
+    pinMode(hallPin[4], INPUT);
+    pinMode(hallPin[5], INPUT);
+    pinMode(hallPin[6], INPUT);
+    pinMode(hallPin[7], INPUT);
+    pinMode(hallPin[8], INPUT);
+    pinMode(hallPin[9], INPUT);
+    pinMode(hallPin[10], INPUT);
+    pinMode(hallPin[11], INPUT);
+    
+    for(int i=0;i<12;i++){
+        pinMode(hallPin[i], INPUT);
+    }
+    for(int i=0;i<3;i++){
+        dht.setup(dhtPin[i], DHTesp::DHT22);
+    }
+    */
     dht.setup(dhtPin, DHTesp::DHT22);
     dht2.setup(dhtPin2, DHTesp::DHT22);
     dht3.setup(dhtPin3, DHTesp::DHT22);
@@ -43,7 +64,7 @@ void setup() {
 //傳送溫溼度數據到資料庫的function
 void sendData(const char* url, DHTesp& dhtSensor) {
     HTTPClient http;
-    http.begin(url);
+    http.begin(url);   
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
     String postData = "temperature=" + String(dhtSensor.getTempAndHumidity().temperature) + "&humidity=" + String(dhtSensor.getTempAndHumidity().humidity);
     int httpResponseCode = http.POST(postData);
@@ -82,7 +103,8 @@ void loop() {
                 Serial.println("Error sending Doorclosedata to Node.js server");
             }
         }
-        http.end();       
+        http.end();     
+        delay(100);  
     }
     */
 
