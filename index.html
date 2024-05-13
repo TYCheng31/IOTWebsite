@@ -110,6 +110,20 @@
             margin-left: -150px; 
         }
 
+        #Linegroup {
+            max-width: 200px; 
+            max-height: 200px; 
+            position: absolute;
+            top: 50px;
+            left: 10px; 
+        }
+
+        #linebutton {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        
         .dropdown-menu.active {
             display: block;
         }
@@ -274,7 +288,7 @@
     </div>
 
     <button id="menutoggle">設定</button>
-
+    
     <div class="dropdown-menu" id="menu">
         <button id="tembutton">溫度設定</button>
         <button id="doorbutton">通知設定</button>
@@ -282,9 +296,11 @@
     </div>
 
     <div class="dropdown-menu" id="doormenu">
+        <button id="linebutton">通知已開啟</button>
         <span class="close-btn" id="closeLine">&times;</span>
         <img id="Linegroup" src="line.jpg">
     </div>
+    
 
     <div class="dropdown-menu" id="temmenu">
         <span class="close-btn" id="closebtn">&times;</span>
