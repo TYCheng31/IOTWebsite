@@ -1,5 +1,6 @@
 var savedmessages = [];//存傳送過的警告
 var savedtimes = [];//存傳送過警告的時間
+var linelock = 1;
 //時間
 function updateDateTime() {
   var currentDateTime = new Date();
@@ -87,7 +88,7 @@ function fetchTH1Data() {
             //溫度過高就傳送LineNotify
             if(latestData.temperature >= limit_temperature[i] && temperaturelock[i] == 0){
               (i == 1)?temperaturemessage = '機櫃後溫度過高':(i == 2)? temperaturemessage = '冷氣出風口溫度過高':temperaturemessage = '室內溫度過高';
-              sendLineNotify(timestampString,temperaturemessage);
+              sendLineNotify(timestampString, temperaturemessage);
               temperaturelock[i] = 1;
             }
             else if(latestData.temperature < limit_temperature[i]){
@@ -119,7 +120,7 @@ function fetchHISData() {
             var gmtPlus8Time = savedtimes[10 - i].getFullYear() + '/' + (savedtimes[10 - i].getMonth() + 1) + '/' + savedtimes[10 - i].getDate() + ' ' + 
                                                     padNumber(savedtimes[10 - i].getHours()) + ':' + padNumber(savedtimes[10 - i].getMinutes()) + ':' + 
                                                     padNumber(savedtimes[10 - i].getSeconds());
-            document.getElementById('warning' + i).innerHTML = gmtPlus8Time + savedmessages[10 - i];
+            document.getElementById('warning' + i).innerHTML = gmtPlus8Time + '     ' + savedmessages[10 - i];
           }
 
           //今日警告
@@ -138,42 +139,43 @@ function fetchHISData() {
   xhttp.send();
 }
 
-
 //LineNotify
 //0503只要有傳送訊息就會把警告訊息存進sendmessages，讓溫溼度警告跟門位警告資料合在一起
 //時間也是傳送訊息時會存起來至savedtimes
-function sendLineNotify(times , sendmessage) {
-  var message = sendmessage;
-  var url = "/send-line-notify";
-
-  savedmessages.push(message);
-  if(savedmessages.length > 10){
-    savedmessages.shift();
+function sendLineNotify(times, sendmessage) {
+  if(linelock == 1){
+    var message = sendmessage;
+    var url = "/send-line-notify";
+  
+    savedmessages.push(message);
+    if(savedmessages.length > 10){
+      savedmessages.shift();
+    }
+    savedtimes.push(times);
+    if(savedtimes.length > 10){
+      savedtimes.shift();
+    }
+    //console.log(savedmessages);
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: message })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('發送訊息時發生錯誤');
+        }
+        console.log("訊息已成功發送至 Line Notify！");
+        return response.text();
+    })
+    .then(data => {
+        console.log(data);
+        document.getElementById("response").innerText = data;
+    })
+    .catch(error => console.error(error));
   }
-  savedtimes.push(times);
-  if(savedtimes.length > 10){
-    savedtimes.shift();
-  }
-  //console.log(savedmessages);
-  fetch(url, {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ message: message })
-  })
-  .then(response => {
-      if (!response.ok) {
-          throw new Error('發送訊息時發生錯誤');
-      }
-      console.log("訊息已成功發送至 Line Notify！");
-      return response.text();
-  })
-  .then(data => {
-      console.log(data);
-      document.getElementById("response").innerText = data;
-  })
-  .catch(error => console.error(error));
 }
 
 //設定按鈕
@@ -215,6 +217,17 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(function(){
         alertBox.remove();
     }, 2000); 
+  });
+
+  linebutton.addEventListener('click', function () {
+    linelock = !linelock;
+    if(linelock == true){
+      document.getElementById('linebutton').innerHTML='通知已開啟'
+    }
+    else if(linelock == false){
+      document.getElementById('linebutton').innerHTML='通知已關閉';
+    }
+    //console.log(linelock);
   });
 
   //關閉溫度設定頁面按鈕
