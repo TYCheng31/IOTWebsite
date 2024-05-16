@@ -86,7 +86,7 @@ function fetchTH1Data() {
             document.getElementById('humidity' + i).innerHTML = HumLocation[i - 1] + latestData.humidity + '%';
             
             //溫度過高就傳送LineNotify
-            if(latestData.temperature >= limit_temperature[i] && temperaturelock[i] == 0){
+            if(latestData.temperature > limit_temperature[i] && temperaturelock[i] == 0){
               (i == 1)?temperaturemessage = '機櫃後溫度過高':(i == 2)? temperaturemessage = '冷氣出風口溫度過高':temperaturemessage = '室內溫度過高';
               sendLineNotify(timestampString, temperaturemessage);
               temperaturelock[i] = 1;
@@ -143,19 +143,19 @@ function fetchHISData() {
 //0503只要有傳送訊息就會把警告訊息存進sendmessages，讓溫溼度警告跟門位警告資料合在一起
 //時間也是傳送訊息時會存起來至savedtimes
 function sendLineNotify(times, sendmessage) {
-  if(linelock == 1){
-    var message = sendmessage;
-    var url = "/send-line-notify";
+  var message = sendmessage;
+  var url = "/send-line-notify";
   
-    savedmessages.push(message);
-    if(savedmessages.length > 10){
-      savedmessages.shift();
-    }
-    savedtimes.push(times);
-    if(savedtimes.length > 10){
-      savedtimes.shift();
-    }
-    //console.log(savedmessages);
+  savedmessages.push(message);
+  if(savedmessages.length > 10){
+    savedmessages.shift();
+  }
+  savedtimes.push(times);
+  if(savedtimes.length > 10){
+    savedtimes.shift();
+  }
+  //console.log(savedmessages);
+  if(linelock == 1){
     fetch(url, {
         method: 'POST',
         headers: {
