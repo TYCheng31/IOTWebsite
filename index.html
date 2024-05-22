@@ -6,15 +6,10 @@
     <title>test</title>
     <style>
         body {
-            background: radial-gradient(circle, rgb(61, 132, 212) 0%, rgb(1, 1, 113) 100%);
+            background: radial-gradient(circle, rgb(44, 110, 185) 0%, rgb(1, 1, 113) 100%);
         }
 
-        #myImage {
-            display: block;
-            margin: 0 auto;
-        }
-
-        .cabinet-info {
+        .time{
             color: rgb(255, 255, 255);
             margin: auto;
             display: flex;
@@ -22,6 +17,39 @@
             justify-content: space-around;
             width: 45%;
             text-align: left;
+        }
+
+        #myImage {
+            display: block;
+            margin: 0 auto;
+            width: 1200px; 
+            height: 500px; 
+        }
+
+
+
+        .cabinet-info {
+            color: rgb(255, 255, 255);
+            background-color: rgb(1, 0, 58);
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            width: 45%;
+            text-align: left;
+        }
+
+        .othersensor {
+            color: rgb(255, 255, 255);
+            background-color: rgb(1, 0, 58);
+            position: absolute; 
+            top: 44%; 
+            left: 10%;
+            text-align: left;
+        }
+
+        #othersensortitle{
+            background-color: rgb(78, 169, 255);
         }
 
         .todaywarning {
@@ -74,7 +102,7 @@
         #warningsContainer {
             flex-grow: 1;
             overflow-y: scroll; 
-            border-top: 2px solid #ccc;
+            border-top: 2px solid #ffffff;
             font-size: 20px;
             scrollbar-color: rgba(241, 241, 241, 0.8) rgba(136, 136, 136, 0.8);
             scrollbar-width: thin;
@@ -89,39 +117,42 @@
 
         #CurrentTime, #Updatetime, #Title, #Cabinet1, #Cabinet2, #Cabinet3, #Cabinet4, #Cabinet5, #Cabinet6, 
         #Cabinet7, #Cabinet8, #Cabinet9, #Cabinet10, #Cabinet11, #Cabinet12, #temperature1, #temperature2, #temperature3,
-        #humidity1, #humidity2, #humidity3{
+        #humidity1, #humidity2, #humidity3,#WaterSensor,#SmokeSensor,#othersensortitle{
             margin: 5px;
             padding: 5px;
             font-size: 27px;
             color: rgb(255, 255, 255);
         }
 
+        /*溫度設置介面*/
         .dropdown-menu {
             width: 300px;
             height: 400px; 
             display: none;
             position: fixed;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgb(161, 161, 161);
             border-radius: 5px;
             padding: 10px;
             top: 50%;
             left: 50%;
             margin-top: -100px; 
             margin-left: -150px; 
+            font-size: 25px;
         }
 
-        #Linegroup {
-            max-width: 200px; 
-            max-height: 200px; 
-            position: absolute;
-            top: 50px;
-            left: 10px; 
-        }
-
+        /*通知開啟關閉按鈕*/
         #linebutton {
-            position: absolute;
-            top: 10px;
-            left: 10px;
+            position:absolute;
+            top: 50px;
+            left: 125px;
+            transform: scale(4);
+        }
+
+        #DDMLCbutton {
+            position:absolute;
+            top: 150px;
+            left: 125px;
+            transform: scale(4);
         }
         
         .dropdown-menu.active {
@@ -161,33 +192,53 @@
             cursor: pointer;
         }
 
+        /*設定按鈕*/
         #menutoggle {
             position: fixed;
             top: 50px;
             left: 50px;
             z-index: 9999;
             transform: scale(2); 
+            background-color: transparent; 
+            border: none; 
+            color: white; 
+            cursor: pointer; 
         }
 
-
+        /*溫度確認按鈕*/
         #submitbutton{
             position:absolute;
-            top: 300px;
+            top: 335px;
             left: 230px;
+            font-size: 20px;
+        }
+
+        #DDMTCbutton{
+            position:absolute;
+            top: 375px;
+            left: 230px;
+            font-size: 20px;
         }
 
         #tembutton{
             position:absolute;
             top: 50px;
-            left: 100px;
-            transform: scale(3);
+            left: 125px;
+            transform: scale(4);
         }
 
         #doorbutton{
             position:absolute;
             top: 150px;
-            left: 100px;
-            transform: scale(3);
+            left: 125px;
+            transform: scale(4);
+        }
+
+        #DDMCbutton{
+            position:absolute;
+            top: 250px;
+            left: 125px;
+            transform: scale(4);
         }
 
         .alert-box {
@@ -213,14 +264,20 @@
     </style>
 </head>
 <body>
-    <img id='myImage' src='room.png'>
-
-    <div class="cabinet-info">
+    <div class="time">
         <p id='CurrentTime'>現在時間: </p>
     </div>
 
+    <img id='myImage' src='room.png'>
+
     <div class="cabinet-info">
         <p id='Updatetime'>上次異動時間: </p>
+    </div>
+
+    <div class="othersensor">
+        <p id='othersensortitle'>其他偵測 <span id='sensor1'></span></p>
+        <p id='SmokeSensor'>煙霧偵測 <span id='smoke1' class='statusIndicator'></span></p>
+        <p id='WaterSensor'>漏水偵測 <span id='water1' class='statusIndicator'></span></p>
     </div>
 
     <div class="cabinet-info">
@@ -292,19 +349,18 @@
     <div class="dropdown-menu" id="menu">
         <button id="tembutton">溫度設定</button>
         <button id="doorbutton">通知設定</button>
-        <span class="close-btn" id="closeset">&times;</span>
+        <button id="DDMCbutton">退出設定</button>
     </div>
 
     <div class="dropdown-menu" id="doormenu">
-        <button id="linebutton">通知已開啟</button>
-        <span class="close-btn" id="closeLine">&times;</span>
-        <img id="Linegroup" src="line.jpg">
+        <button id="linebutton">通知開啟</button>
+        <button id="DDMLCbutton">退出設定</button>
     </div>
     
 
     <div class="dropdown-menu" id="temmenu">
-        <span class="close-btn" id="closebtn">&times;</span>
-        <div class="menu-title">警示溫度</div>
+        <div class="menu-title">警示溫度設定</div>
+        <br> <!-- 添加空白行 -->
         <div class="submenu">
             <label for="limittemperature1">機櫃後溫度：</label>
             <input type="text" id="limittemperature1">
@@ -318,6 +374,7 @@
             <input type="text" id="limittemperature3">
         </div>
         <button id="submitbutton">確認</button>
+        <button id="DDMTCbutton">退出</button>
     </div>
     
     <script src="script.js"></script>
