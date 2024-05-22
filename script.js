@@ -9,7 +9,7 @@ function updateDateTime() {
   var formattedTime = padNumber(currentDateTime.getHours()) + ':' + padNumber(currentDateTime.getMinutes()) + ':' + padNumber(currentDateTime.getSeconds());
   var formattedDate = currentDateTime.getFullYear() + '/' + (currentDateTime.getMonth() + 1) + '/' + currentDateTime.getDate();
   
-  currentTimeElement.textContent = '現在時間: ' + formattedDate + ' ' + formattedTime;
+  currentTimeElement.textContent = '日期:' + formattedDate +'時間:' + formattedTime;
 }
 
 //時間去0
@@ -217,30 +217,45 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(function(){
         alertBox.remove();
     }, 2000); 
-  });
+  }); 
 
   linebutton.addEventListener('click', function () {
     linelock = !linelock;
     if(linelock == true){
-      document.getElementById('linebutton').innerHTML='通知已開啟'
+      document.getElementById('linebutton').innerHTML='開啟通知'
+      var linealertBox = document.createElement('div');
+      linealertBox.textContent = 'Line通知已開啟！';
+      linealertBox.classList.add('alert-box');
+      document.body.appendChild(linealertBox);
+      setTimeout(function(){
+        linealertBox.remove();
+      }, 2000);
     }
     else if(linelock == false){
-      document.getElementById('linebutton').innerHTML='通知已關閉';
+      document.getElementById('linebutton').innerHTML='關閉通知';
+      var linealertBox = document.createElement('div');
+      linealertBox.textContent = 'Line通知已關閉！';
+      linealertBox.classList.add('alert-box');
+      document.body.appendChild(linealertBox);
+      setTimeout(function(){
+        linealertBox.remove();
+      }, 2000);
     }
     //console.log(linelock);
   });
 
   //關閉溫度設定頁面按鈕
-  closebtn.addEventListener('click', function () {
-      temmenu.classList.remove('active');
+  DDMTCbutton.addEventListener('click', function () {
+    temmenu.classList.remove('active');
   });
 
   //關閉通知設定按鈕
-  closeLine.addEventListener('click', function () {
+  DDMLCbutton.addEventListener('click', function () {
     doormenu.classList.remove('active');
-});
+  });
+
   //關閉設定按鈕
-  closeset.addEventListener('click', function () {
+  DDMCbutton.addEventListener('click', function () {
     menu.classList.remove('active');
   });
 
@@ -253,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 //網頁刷新資料頻率
-setInterval(updateDateTime, 1000); 
-setInterval(fetchTH1Data, 1000);
-setInterval(fetchDoorData, 1000);
-setInterval(fetchHISData, 1000);
+setInterval(updateDateTime, 100); 
+setInterval(fetchTH1Data, 100);
+setInterval(fetchDoorData, 100);
+setInterval(fetchHISData, 100);
