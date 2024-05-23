@@ -114,15 +114,15 @@ function fetchHISData() {
           var timestampString = new Date(latestData.timestamp);
           var today = new Date();
           //console.log(savedtimes);//第一項是第十筆最後一項才是最新一筆資料
-
           //歷史警告
-          if(savedtimes[10 - i] != null){
-            var gmtPlus8Time = savedtimes[10 - i].getFullYear() + '/' + (savedtimes[10 - i].getMonth() + 1) + '/' + savedtimes[10 - i].getDate() + ' ' + 
-                                                    padNumber(savedtimes[10 - i].getHours()) + ':' + padNumber(savedtimes[10 - i].getMinutes()) + ':' + 
-                                                    padNumber(savedtimes[10 - i].getSeconds());
-            document.getElementById('warning' + i).innerHTML = gmtPlus8Time + '     ' + savedmessages[10 - i];
+          for(var j=10;j<savedmessages.length;j--){
+            var gmtPlus8Time = savedtimes[i-1].getFullYear() + '/' + (savedtimes[i-1].getMonth() + 1) + '/' + savedtimes[i-1].getDate() + ' ' + padNumber(savedtimes[i-1].getHours()) + ':' + padNumber(savedtimes[i-1].getMinutes()) + ':' + padNumber(savedtimes[i-1].getSeconds());
+          
           }
+          
+          document.getElementById('warning' + i).innerHTML = gmtPlus8Time + '     ' + savedmessages[i-1];
 
+          /*
           //今日警告
           if(timestampString.getDate() == today.getDate() && timestampString.getMonth() == today.getMonth() && timestampString.getFullYear() == today.getFullYear()){
             if(latestData.doorstate == 1){
@@ -132,6 +132,7 @@ function fetchHISData() {
               document.getElementById('todaywarning' + i).innerHTML = '事件' + i + ': ' + gmtPlus8Time + ': 機櫃' + indicatornumber + doorlocate + '關閉';
             }
           }
+          */
         }
       }
   };
@@ -154,7 +155,7 @@ function sendLineNotify(times, sendmessage) {
   if(savedtimes.length > 10){
     savedtimes.shift();
   }
-  //console.log(savedmessages);
+  console.log(savedmessages,savedtimes );
   if(linelock == 1){
     fetch(url, {
         method: 'POST',
