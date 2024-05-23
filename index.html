@@ -39,6 +39,14 @@
             text-align: left;
         }
 
+        .sensortitle {
+            color: rgb(255, 255, 255);
+            background-color: rgb(78, 169, 255);
+            width: 100%;
+            text-align: center;
+            font-size: 30px;
+        }
+
         .othersensor {
             color: rgb(255, 255, 255);
             background-color: rgb(1, 0, 58);
@@ -117,7 +125,7 @@
 
         #CurrentTime, #Updatetime, #Title, #Cabinet1, #Cabinet2, #Cabinet3, #Cabinet4, #Cabinet5, #Cabinet6, 
         #Cabinet7, #Cabinet8, #Cabinet9, #Cabinet10, #Cabinet11, #Cabinet12, #temperature1, #temperature2, #temperature3,
-        #humidity1, #humidity2, #humidity3,#WaterSensor,#SmokeSensor,#othersensortitle{
+        #humidity1, #humidity2, #humidity3,#WaterSensor,#SmokeSensor,#othersensortitle,#SensorTitle{
             margin: 5px;
             padding: 5px;
             font-size: 27px;
@@ -269,6 +277,10 @@
     </div>
 
     <img id='myImage' src='room.png'>
+
+    <div class="cabinet-info">
+        <p id='SensorTitle' class="sensortitle">門位偵測<span id='sensor0'></span></p>
+    </div>
 
     <div class="cabinet-info">
         <p id='Updatetime'>上次異動時間: </p>
