@@ -115,12 +115,14 @@ function fetchHISData() {
           var today = new Date();
           //console.log(savedtimes);//第一項是第十筆最後一項才是最新一筆資料
           //歷史警告
-          for(var j=10;j<savedmessages.length;j--){
-            var gmtPlus8Time = savedtimes[i-1].getFullYear() + '/' + (savedtimes[i-1].getMonth() + 1) + '/' + savedtimes[i-1].getDate() + ' ' + padNumber(savedtimes[i-1].getHours()) + ':' + padNumber(savedtimes[i-1].getMinutes()) + ':' + padNumber(savedtimes[i-1].getSeconds());
-          
+          if(savedtimes.length > 0){
+            var gmtPlus8Time = savedtimes[savedtimes.length-i+1].getFullYear() + '/' + (savedtimes[savedtimes.length-i+1].getMonth() + 1) + 
+            '/' + savedtimes[savedtimes.length-i+1].getDate() + ' ' + padNumber(savedtimes[savedtimes.length-i+1].getHours()) + ':' + 
+            padNumber(savedtimes[savedtimes.length-i+1].getMinutes()) + ':' + padNumber(savedtimes[savedtimes.length-i+1].getSeconds());
+
+            document.getElementById('warning' + i).innerHTML = gmtPlus8Time + '     ' + savedmessages[savedtimes.length-i+1];
           }
           
-          document.getElementById('warning' + i).innerHTML = gmtPlus8Time + '     ' + savedmessages[i-1];
 
           /*
           //今日警告
