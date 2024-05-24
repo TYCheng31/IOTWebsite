@@ -27,15 +27,10 @@ function fetchDoorData() {
           var data = JSON.parse(this.responseText);
           var latestData = data[data.length - 1] || {};
           var timestampString = new Date(latestData.timestamp);
+          var gmtPlus8Time = timestampString.getFullYear() + '/' + (timestampString.getMonth() + 1) + '/' + timestampString.getDate() + ' ' + padNumber(timestampString.getHours()) + ':' + padNumber(timestampString.getMinutes()) + ':' + padNumber(timestampString.getSeconds());
           var indicatornumber = latestData.doornumber;
           var statusIndicator = document.getElementById('indicator' + indicatornumber);
           var doorlocate;
-
-          if(savedtimes[0] != null){
-            var gmtPlus8Time = savedtimes[0].getFullYear() + '/' + (savedtimes[0].getMonth() + 1) + '/' + savedtimes[0].getDate() + ' ' + 
-                                                    padNumber(savedtimes[0].getHours()) + ':' + padNumber(savedtimes[0].getMinutes()) + ':' + 
-                                                    padNumber(savedtimes[0].getSeconds());
-          }
 
           //門位訊息的狀態
           (indicatornumber <= 6) ?  doorlocate = '_前門' : doorlocate = '_後門';
@@ -46,7 +41,7 @@ function fetchDoorData() {
 
           //找最新一筆門位資料選擇傳送LineNotify
           if(latestData.doorstate == 1 && doorlock == 0){
-            sendLineNotify(timestampString , doormessage);
+            sendLineNotify(gmtPlus8Time , doormessage);
             doorlock = 1;
           }
           else if(latestData.doorstate == 0){
@@ -82,13 +77,14 @@ function fetchTH1Data() {
             var data = JSON.parse(this.responseText);
             var latestData = data[data.length - 1] || {};
             var timestampString = new Date(latestData.timestamp);
+            var gmtPlus8Time = timestampString.getFullYear() + '/' + (timestampString.getMonth() + 1) + '/' + timestampString.getDate() + ' ' + padNumber(timestampString.getHours()) + ':' + padNumber(timestampString.getMinutes()) + ':' + padNumber(timestampString.getSeconds());
             document.getElementById('temperature' + i).innerHTML = TemLocation[i - 1] + latestData.temperature + 'C';
             document.getElementById('humidity' + i).innerHTML = HumLocation[i - 1] + latestData.humidity + '%';
             
             //溫度過高就傳送LineNotify
             if(latestData.temperature > limit_temperature[i] && temperaturelock[i] == 0){
               (i == 1)?temperaturemessage = '機櫃後溫度過高':(i == 2)? temperaturemessage = '冷氣出風口溫度過高':temperaturemessage = '室內溫度過高';
-              sendLineNotify(timestampString, temperaturemessage);
+              sendLineNotify(gmtPlus8Time, temperaturemessage);
               temperaturelock[i] = 1;
             }
             else if(latestData.temperature < limit_temperature[i]){
@@ -104,42 +100,21 @@ function fetchTH1Data() {
 
 //警告
 function fetchHISData() {
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        var data = JSON.parse(this.responseText);
-        //取資料庫前十筆資料
-        for(var i = 1; i < 11; i++){
-          var latestData = data[data.length - i] || {};
-          var timestampString = new Date(latestData.timestamp);
-          var today = new Date();
-          //console.log(savedtimes);//第一項是第十筆最後一項才是最新一筆資料
-          //歷史警告
-          if(savedtimes.length > 0){
-            var gmtPlus8Time = savedtimes[savedtimes.length-i+1].getFullYear() + '/' + (savedtimes[savedtimes.length-i+1].getMonth() + 1) + 
-            '/' + savedtimes[savedtimes.length-i+1].getDate() + ' ' + padNumber(savedtimes[savedtimes.length-i+1].getHours()) + ':' + 
-            padNumber(savedtimes[savedtimes.length-i+1].getMinutes()) + ':' + padNumber(savedtimes[savedtimes.length-i+1].getSeconds());
-
-            document.getElementById('warning' + i).innerHTML = gmtPlus8Time + '     ' + savedmessages[savedtimes.length-i+1];
-          }
-          
-
-          /*
-          //今日警告
-          if(timestampString.getDate() == today.getDate() && timestampString.getMonth() == today.getMonth() && timestampString.getFullYear() == today.getFullYear()){
-            if(latestData.doorstate == 1){
-              document.getElementById('todaywarning' + i).innerHTML = '事件' + i + ': ' + gmtPlus8Time + ': 機櫃' + indicatornumber + doorlocate + '開啟';
-            }
-            else if(latestData.doorstate == 0){
-              document.getElementById('todaywarning' + i).innerHTML = '事件' + i + ': ' + gmtPlus8Time + ': 機櫃' + indicatornumber + doorlocate + '關閉';
-            }
-          }
-          */
-        }
-      }
-  };
-  xhttp.open('GET', '/data/doordata', true);
-  xhttp.send();
+  var today = new Date();
+  var todayStr = today.getFullYear() + '/' + ('0' + (today.getMonth() + 1)).slice(-1) + '/' + ('0' + today.getDate()).slice(-2);
+  for(var i = 1; i < 11; i++){
+    //console.log(savedtimes);//第一項是第十筆最後一項才是最新一筆資料
+    //歷史警告
+    if(savedtimes[savedtimes.length-i] != null){
+      document.getElementById('warning' + i).innerHTML = savedtimes[savedtimes.length-i] + '     ' + savedmessages[savedmessages.length-i];
+    }
+    /*
+    console.log(savedtimes[savedtimes.length - i].split(' ')[0],todayStr);
+    if(savedtimes[savedtimes.length - i].split(' ')[0] == todayStr){
+      document.getElementById('todaywarning' + i).innerHTML = savedtimes[savedtimes.length-i] + '     ' + savedmessages[savedmessages.length-i];
+    }
+    */
+  }
 }
 
 //LineNotify
@@ -222,6 +197,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 2000); 
   }); 
 
+  //Line通知開啟關閉按鈕
   linebutton.addEventListener('click', function () {
     linelock = !linelock;
     if(linelock == true){
