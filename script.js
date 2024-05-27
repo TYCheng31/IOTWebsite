@@ -107,13 +107,11 @@ function fetchHISData() {
     //歷史警告
     if(savedtimes[savedtimes.length-i] != null){
       document.getElementById('warning' + i).innerHTML = savedtimes[savedtimes.length-i] + '     ' + savedmessages[savedmessages.length-i];
+      if(savedtimes[savedtimes.length-i].split(' ')[0] == todayStr){
+        document.getElementById('todaywarning' + i).innerHTML = savedtimes[savedtimes.length-i] + '     ' + savedmessages[savedmessages.length-i];
+      }
     }
-    /*
-    console.log(savedtimes[savedtimes.length - i].split(' ')[0],todayStr);
-    if(savedtimes[savedtimes.length - i].split(' ')[0] == todayStr){
-      document.getElementById('todaywarning' + i).innerHTML = savedtimes[savedtimes.length-i] + '     ' + savedmessages[savedmessages.length-i];
-    }
-    */
+    //console.log(savedtimes[savedtimes.length-i].split(' ')[0],todayStr);
   }
 }
 
