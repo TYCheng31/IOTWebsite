@@ -47,9 +47,9 @@ function fetchDoorData() {
           else if(latestData.doorstate == 0){
             doorlock = 0;
           }
-          //console.log(indicatornumber);
 
-          document.getElementById('Updatetime').innerHTML = '上次異動時間: ' + gmtPlus8Time ;
+          //document.getElementById('Updatetime').innerHTML = '上次異動時間: ' + gmtPlus8Time ;
+          
           //門位被開啟顯示紅色
           if (latestData.doorstate === 1) {
             statusIndicator.style.backgroundColor = 'red';
@@ -104,7 +104,6 @@ function fetchHISData() {
   var todayStr = today.getFullYear() + '/' + ('0' + (today.getMonth() + 1)).slice(-1) + '/' + ('0' + today.getDate()).slice(-2);
   for(var i = 1; i < 11; i++){
     //console.log(savedtimes);//第一項是第十筆最後一項才是最新一筆資料
-    //歷史警告
     if(savedtimes[savedtimes.length-i] != null){
       document.getElementById('warning' + i).innerHTML = savedtimes[savedtimes.length-i] + '     ' + savedmessages[savedmessages.length-i];
       if(savedtimes[savedtimes.length-i].split(' ')[0] == todayStr){
