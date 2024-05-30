@@ -16,7 +16,6 @@ const DoorModel = mongoose.model('doorstate', {
 });
 
 const THModel1 = mongoose.model('t&h1', {
-  //_id:"機櫃後門溫度",
   temperature: Number,
   humidity: Number,
   timestamp: { type: Date, default: Date.now },
