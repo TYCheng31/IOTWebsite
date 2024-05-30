@@ -1,6 +1,6 @@
 var savedmessages = [];//存傳送過的警告
 var savedtimes = [];//存傳送過警告的時間
-var linelock = 1;
+var linelock = 1;//LINE通知的鎖
 //時間
 function updateDateTime() {
   var currentDateTime = new Date();
@@ -18,7 +18,8 @@ function padNumber(number) {
 }     
 
 //門位 改門位圖示顏色
-var doorlock = 1;
+//檢查門位資料庫第一筆資料，是開啟且所沒被鎖住就傳送LINE訊息並找該門位改成紅標，直到下次檢查到是關閉再改成綠標。
+var doorlock = 1;//避免重複傳送一樣的訊息
 function fetchDoorData() {
   var xhttp = new XMLHttpRequest();
   var doormessage;
@@ -63,8 +64,9 @@ function fetchDoorData() {
 }
 
 //溫溼度
-var temperaturelock = [1,1,1,1];//三個溫濕度警告的鎖
-var limit_temperature = [100,100,100,100];//初始限制溫度
+//用迴圈找每個溫度偵測的資料庫，途中溫度若高於設定溫度就傳送LINE訊息
+var temperaturelock = [1,1,1,1];//避免傳送相同的溫度過高訊息
+var limit_temperature = [100,100,100,100];//初始限制溫度，預設不會溫度過高
 function fetchTH1Data() {
   var TemLocation = ["機櫃後溫度: ","冷氣出風口溫度: ","室內溫度: "];
   var HumLocation = ["機櫃後濕度: ","冷氣出風口濕度: ","室內溼度: "];
@@ -99,6 +101,7 @@ function fetchTH1Data() {
 }
 
 //警告
+//用剛剛存下來的警告訊息加入警告列表中
 function fetchHISData() {
   var today = new Date();
   var todayStr = today.getFullYear() + '/' + ('0' + (today.getMonth() + 1)).slice(-1) + '/' + ('0' + today.getDate()).slice(-2);
