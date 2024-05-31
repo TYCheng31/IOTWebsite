@@ -6,10 +6,10 @@
 //const byte hallPin[12] = {1,2,3,4,5,6,7,8,9,10,11,12};//12個霍爾感應的Pin角
 //const byte dhtPin[3] = {14, 15, 27};//3個溫溼度的pin角
 
-const byte hallPin = 13;//霍爾感應的pin角
-const byte dhtPin = 14;//溫溼度的pin角
-const byte dhtPin2 = 15;//溫溼度的pin角
-const byte dhtPin3 = 27;//溫溼度的pin角
+const byte hallPin = 27;//霍爾感應的pin角
+const byte dhtPin = 12;//溫溼度的pin角
+const byte dhtPin2 = 13;//溫溼度的pin角
+const byte dhtPin3 = 14;//溫溼度的pin角
 const char *ssid = "TP-Link_A298";//Wifi名稱
 const char *password = "46336019";//Wifi密碼
 const char *serverUrl = "http://192.168.0.105:3000/data/doordata"; //ipconfig ipv4
