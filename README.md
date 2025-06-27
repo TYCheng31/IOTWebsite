@@ -1,7 +1,6 @@
 # 機房環境監測  
 *架構圖  
-<img src="https://github.com/user-attachments/assets/73c5ab46-dee9-475c-b699-1a949caa92dc" alt="image" width="800" />  
-
+<img src="https://github.com/user-attachments/assets/b8a715f4-b348-474c-ba56-2861e4532652" alt="image" width="800" />  
 ## app.js
 後端程式碼
 ## arduino.c
