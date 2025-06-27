@@ -1,20 +1,19 @@
 # 機房環境監測
 
-## 資料夾說明
-### app.js
+## app.js
 後端程式碼
-### arduino.c
+## arduino.c
 Node-32S程式碼
 * 蒐集感測器數據 (溫溼度、機房機櫃開關狀態)
 * 傳資料到資料庫 (MongoDB)
-### index.html
+## index.html
 前端程式碼
 * 溫溼度
 * 機櫃開啟狀態
 * 歷史警告
 * 警報設定
-### script.js
+## script.js
 前端程式碼
-### smoketest.ino
+## smoketest.ino
 蒸煙警報器
 
