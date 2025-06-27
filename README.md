@@ -1,4 +1,5 @@
 # 機房環境監測
+![機房環境監控架構圖](https://github.com/user-attachments/assets/eefc554a-6395-4855-8c58-0fc613580ae1)
 
 ## app.js
 後端程式碼
